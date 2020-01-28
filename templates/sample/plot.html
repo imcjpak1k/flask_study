@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>로그인화면</title>
+<script type="text/javascript" src="/static/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#btn_refresh').click(function(){
+			$.ajax({
+				url:'/sample/plot.png',
+				cache:false,
+				xhr:function(){// Seems like the only way to get access to the xhr object
+					var xhr = new XMLHttpRequest();
+					xhr.responseType= 'blob'
+					return xhr;
+				},
+				success: function(data){
+					// var img = document.getElementById('png1');
+					var url = window.URL || window.webkitURL;
+					// img.src = url.createObjectURL(data);
+					$('#png1').attr('src', url.createObjectURL(data));
+				},
+				error:function(){
+					
+				}
+			});
+		});
+		
+		$('#btn_stock_refresh').click(function(){
+			$.ajax({
+				url:'/sample/plot.stock.png',
+				cache:false,
+				xhr:function(){// Seems like the only way to get access to the xhr object
+					var xhr = new XMLHttpRequest();
+					xhr.responseType= 'blob'
+					return xhr;
+				},
+				success: function(data){
+					// var img = document.getElementById('png1');
+					var url = window.URL || window.webkitURL;
+					// img.src = url.createObjectURL(data);
+					$('#png2').attr('src', url.createObjectURL(data));
+				},
+				error:function(){
+					
+				}
+			});
+		});
+	});
+</script>
+</head>
+
+<body>
+	<img src="/sample/plot.png" id="png1" alt="my plot">
+	<input type='button' id='btn_refresh' value="test">
+<br/>
+	<img src="/sample/plot.stock.png" id="png2" alt="my plot">
+	<input type='button' id='btn_stock_refresh' value="test">
+	
+</body>		
+</html>

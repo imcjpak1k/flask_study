@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>{{title}}</title>
+
+{% include './common/head.html' %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // jinja parameter to json
+    var params = {{ args | tojson | safe }};
+    console.log(params)
+
+    // 종목 등록/수정
+    $('#btn_reg').on('click', function() {
+        console.log('btn_reg button click')
+        req_data = { 
+            name : $('#stock_symbol_name').val(),
+            stock_code : $('#stock_symbol_code').val(), 
+        }
+
+        $.ajax({
+            url			: '/company/register',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data)
+        })
+        .done(function( msg ) {
+            console.log(msg)
+            if(!msg || msg.success == false) {
+                return  alert('실패~~~')
+
+            }
+
+            window.location.href = "/stock.list";
+        });
+    });
+ 
+    // 종목삭제
+    $('#btn_del').on('click', function() {
+        console.log('btn_del button click')
+    });
+    
+    // 종목정보 조회
+    if(params && params.symbol_code) {
+    }
+
+
+    // 종목코드 event
+    $('#stock_symbol_code').on('focusout', function() {
+        if($.isEmptyObject($(this).val())) {
+            return false;
+        }
+
+        req_data = { 
+            search_keyword : $(this).val()
+        }
+
+        $.ajax({
+            url			: '/stocksymbol/search_stock_symbol_scraping',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data)
+        })
+        .done(function( data ) {
+            if(!data || data.success == false) {
+                return  alert('실패~~~')
+            }
+            
+            // 결과입력
+            $('#stock_symbol_name').val(data.stock_symbol_name)
+            $('#stock_symbol_code').val(data.stock_symbol_code)
+        });
+
+    });
+});
+</script>
+</head>
+<body>
+        <!-- https://datatables.net/ -->
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>종목코드</th>
+                    <td>
+                        <input type='text' id='stock_symbol_code'>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>종목명</th>
+                    <td>
+                        <input type='text' id='stock_symbol_name' readonly>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <input type='button' id='btn_reg' value='등록'/>
+            <input type='button' id='btn_del' value='삭제'/>
+        </div>
+</body>		
+</html>

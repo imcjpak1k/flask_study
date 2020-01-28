@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>{{title}}</title>
+
+{% include './common/head.html' %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var params = {{ args | tojson | safe }};
+    console.log(params);
+    // console.log('{{ args }}')
+    // console.log('{{ args }}')
+    // console.log("{{ args['a'] }}")
+    var table = $('#example').DataTable( {
+        "select"    :true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "/company/search",
+            "type": "POST",
+            "dataType": "json",
+            "contentType" : "application/json",
+            "data" : function(d) {
+                // REQUEST PARAMETER 입력
+                d.test = 'TEST REQ'
+                d.test2 = '테스트 요청'
+                d.data = [{
+                        a : 'a',
+                        seq : 1
+                    },
+                    {
+                        a : 'a2',
+                        seq : 2
+                    }
+                ]
+                // return d
+                // "contentType" : "application/json",
+                return JSON.stringify(d);
+            },
+            "dataSrc": function(res) {
+                // 응답데이터
+                var data = res.data;
+                console.log(data)
+                return data;
+            } 
+        },
+        "columns": [
+            { "data": "stock_code" },
+            { "data": "name" }
+        ]
+    } );
+    
+    // grid click
+    table.on( 'click', 'tr', function () {
+    // $('#example tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+        
+        var data = table.row( this ).data();
+    } );
+
+    // grid dblclick
+    table.on( 'dblclick', 'tr', function () {
+    // $('#example tbody').on( 'dblclick', 'tr', function () {
+        var data = table.row( this ).data();
+        console.log(data['id'])
+        window.location.href = "/company.register?id="+data.id;
+    } );
+
+    $('#btn_reg').click( function () {
+				window.location.href = "/company.register?stock_code=";
+    } );
+
+    $('#btn_del').click( function () {
+        var data = table.$('input, select').serialize();
+        console.log(data)
+        // table.row('.selected').remove().draw( false );
+    } );
+ 
+});
+</script>
+</head>
+<body>
+        <!-- https://datatables.net/ -->
+        <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>종목코드</th>
+                    <th>종목명</th>
+                </tr>
+            </thead>
+        </table>
+        <div>
+            <input type='button' id='btn_reg' value='등록'/>
+            <input type='button' id='btn_del' value='삭제'/>
+        </div>
+</body>		
+</html>

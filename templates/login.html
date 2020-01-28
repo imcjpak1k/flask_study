@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>로그인화면</title> 
+
+{% include './common/head.html' %}
+ 
+ 
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#btn_login').click(function() { 
+			$.ajax({
+				url			: '/user/login',
+				// url			: '/test',
+				type		: 'post',
+				dataType	: 'json',
+				// contentType	: 'application/json',
+				data 	: JSON.stringify({ 
+							id : $('#id').val(), 
+							pw : $('#pw').val()
+						  })
+			})
+			.done(function( msg ) {
+				console.log(msg)
+				if(!msg || msg.success == false) {
+					return  alert('실패~~~')
+
+				}
+
+				alert( msg.name);
+				// window.location.href = "/go?page_id=stock_list";
+				window.location.href = "/company.list?a=1&b=2";
+			});
+		});
+	});
+</script>
+</head>
+
+<body>
+<input type='text' name='id' id='id' value='imcjpak1k@naver.com'><br>
+<input type='password' name='pw' id='pw' value="1234"><br>
+<input type='button' name='btn_login' id='btn_login' value="로그인">
+</body>		
+</html>

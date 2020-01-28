@@ -1,0 +1,307 @@
+<html>
+<head>
+<title>{{title}}</title>
+
+{% include './common/head.html' %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // jinja parameter to json
+    var params = {{ args | tojson | safe }};
+    console.log(params);
+    
+    // --------------------------------------------------------------------------------------
+    // 일별주가LOAD 서비스 호출
+    // --------------------------------------------------------------------------------------
+    var svc_stock_scraping = function(req_data) {
+        if($.isEmptyObject(req_data)) {
+            return false;
+        }
+
+        // req_data = { 
+        //     code : code,
+        //     company_id : code,
+        // };
+
+        $.ajax({
+            url			: '/scraping/daily_stock_price',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data),
+            success     : function(data) {
+                console.log('success');
+                console.log(data)
+                if(!data || data.success == false) {
+                    // return alert('실패~~~');
+                    return alert(data.message);
+                }
+
+                alert('주가정보를 로드하였습니다.');
+                window.location.href = "/company.list";
+            },
+            error : function(xhr, status, error){
+                debugger
+                console.log('error');
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+
+                
+                alert(xhr.reponseText);
+            }
+        });
+    };
+
+    // --------------------------------------------------------------------------------------
+    // 등록 서비스 호출
+    // --------------------------------------------------------------------------------------
+    var svc_reg = function() {
+        req_data = { 
+            id : params.id,
+            name : $('#name').val(),
+            stock_code : $('#stock_code').val(), 
+        };
+
+        $.ajax({
+            url			: '/company/register',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data),
+        })
+        .done(function( data ) {
+            console.log(data)
+            if(!data || data.success == false) {
+                return  alert('실패~~~');
+
+            }
+            
+            if(confirm("주가정보를 LOAD하시겠습니까??")) {
+                svc_stock_scraping( {
+                        code : data.stock_code ,
+                        company_id : data.id,
+                });
+            }
+            else {
+                window.location.href = "/company.list";
+            }
+        });
+    };
+
+    // --------------------------------------------------------------------------------------
+    // 삭제 서비스 호출
+    // --------------------------------------------------------------------------------------
+    var svc_del = function() {
+        var req_data    = {
+            id : params.id,
+        }
+
+        $.ajax({
+            url			: '/company/delete',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data)
+        })
+        .done(function( data ) {
+            if(!data || data.success == false) {
+                return  alert('실패~~~')
+            }
+
+            window.location.href = "/company.list";
+        });
+    };
+
+
+    // --------------------------------------------------------------------------------------
+    // 조회 서비스 호출
+    // --------------------------------------------------------------------------------------
+    var svc_srh = function(req_data) {
+        // var req_data    = {
+        //     id : params.id,
+        // }
+
+        $.ajax({
+            url			: '/company/detail',
+            type		: 'post',
+            dataType    : 'json',
+            contentType : 'application/json; charset=utf-8',
+            data 	    : JSON.stringify(req_data)
+        })
+        .done(function( data ) {
+            if(!data || data.success == false) {
+                return  alert('실패~~~')
+            }
+            
+            // 결과입력
+            $('#id').val(           data.id);
+            $('#name').val(         data.name);
+            $('#stock_code').val(   data.stock_code);
+        });
+    };
+
+    // -----------------------------------------------------------------------------------
+    // 초기화 
+    // -----------------------------------------------------------------------------------
+    if(params && params.id) {
+        var req_data    = {
+            id : params.id,
+        }
+
+        // 조회 서비스 호출
+        svc_srh(req_data);
+    }
+
+
+
+    
+    // ----------------------------------------------------------------------------------
+    // 회사정보 그리드
+    // https://datatables.net/reference/api/
+    // ----------------------------------------------------------------------------------
+    var table = $('#example').DataTable( {
+        'select'    : true,
+        'processing': true,
+        'serverSide': true,
+        'ajax': {
+            'url' : '/scraping/search_stock_items',
+            'type' : 'POST',
+            'dataType' : 'json',
+            'contentType' : 'application/json',
+            'data' : function(d) {
+                // REQUEST PARAMETER 입력
+                // 검색키워드
+                d.search_keyword = $('#name').val();
+
+                return JSON.stringify(d);
+            },
+            'dataSrc': function(res) {
+                // 응답데이터
+                var data = res.data;
+                console.log(data)
+                return data;
+            } 
+        },
+        'columns': [
+            { "data": "market" },
+            { "data": "code" },
+            { "data": "name" },
+            { "data": "link" },
+        ]
+    } );
+    
+    // grid click
+    table.on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+        
+        var data = table.row( this ).data();
+        // console.log(data);
+
+        $('#name').val(         data.name);
+        $('#stock_code').val(   data.code);
+    } );
+
+    // -----------------------------------------------------------------------------------
+    // 회사명의 상품목록조회(naver 종목검색)
+    // -----------------------------------------------------------------------------------
+    $('#name').on('keyup', function() {
+        if($.isEmptyObject($(this).val())) {
+            return false;
+        }
+
+        console.log($(this).val());
+
+        // // https://datatables.net/reference/api/search()
+        table.search( this.value ).draw();
+
+        // // https://datatables.net/reference/api/columns().search()
+        // table
+        //     .columns('name')
+        //     .search( this.value )
+        //     .draw();
+    });
+
+
+    // -----------------------------------------------------------------------------------
+    // 회사정보 등록/수정
+    // -----------------------------------------------------------------------------------
+    $('#btn_reg').on('click', function() {
+        // 등록서비스 호출
+        svc_reg();
+    });
+ 
+    // -----------------------------------------------------------------------------------
+    // 회사정보 삭제
+    // -----------------------------------------------------------------------------------
+    $('#btn_del').on('click', function() {
+        // 삭제 서비스 호출
+        svc_del();
+    });
+ 
+    // -----------------------------------------------------------------------------------
+    // 주가LOAD
+    // -----------------------------------------------------------------------------------
+    $('#btn_stoc_load').on('click', function() { 
+        svc_stock_scraping({
+                code : $('#stock_code').val() ,
+                company_id : $('#id').val() ,
+        });
+    });
+    
+
+});
+</script>
+</head>
+<body>
+    </div>
+        <!-- https://datatables.net/ -->
+        <table class="display" style="width:100%">
+            <tbody>
+                <tr>
+                    <th>회사명(종목명)</th>
+                    <td>
+                        <input type='text' id='name' reanly>
+                    </td>
+                </tr>
+                <tr>
+                    <th>종목코드</th>
+                    <td>
+                        <input type='text' id='stock_code'>
+                    </td>
+                </tr>
+                <tr>
+                    <th>company_id</th>
+                    <td>
+                        <input type='text' id='id' readonly>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <input type='button' id='btn_reg' value='등록'/>
+            <input type='button' id='btn_del' value='삭제'/>
+            <input type='button' id='btn_stoc_load' value='주가LOAD'/>
+        </div> 
+    </div>
+
+
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>시장</th>
+                <th>종목코드</th>
+                <th>종목명</th>
+                <th>링크</th>
+            </tr>
+        </thead>
+    </table>
+
+</body>		
+</html>

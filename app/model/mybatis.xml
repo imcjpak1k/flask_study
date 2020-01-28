@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stock">
+    <select id="inquiry_user_info_by_email">
+        SELECT T1.EMAIL			AS email			/* 로그인아이디 */
+                , T1.PWD			AS pwd				/* 로그인비밀번호 */
+                , T1.NAME			AS name				/* 사용자명 */
+                , T1.USE_YN		AS use_yn			/* 사용여부 */
+                , T1.REG_DATETIME	AS reg_datetime		/* 등록일 */
+            FROM USER T1
+            WHERE 1=1 
+            AND T1.EMAIL 	= :email
+            AND T1.USE_YN 	= '1'
+    </select>
+</mapper>

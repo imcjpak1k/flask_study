@@ -1,0 +1,50 @@
+from flask import Blueprint, request, jsonify
+import logging
+
+logger = logging.getLogger(__name__)
+
+this = Blueprint('stocksymboltrade', __name__, url_prefix='/stocksymboltrade')
+
+from app.module import decorator
+from app.module.scraping import naver_stock as stock
+from app.model import stock_symbol_info 
+from app.model import stock_symbol_trade_info 
+
+
+
+# @this.route('/login')
+# def login():
+#     return 'stock login'
+
+# @this.route('/scraping')
+# def scraping():
+#     logging.debug('stock load')
+#     stock_list = stock.localStockInfo(code='005930', page=1, startDate="20190715", endDate="20190722")
+#     logging.debug(stock_list)
+#     return jsonify(stock_list)
+
+# @this.route('/scraping_all')
+# def scraping_all():
+#     """
+#     모든 종목정보의 거래정보를 가져온다.
+#     """
+#     # # 종목정보조회
+#     stock_symbol_cls       = stock_symbol_info.StockSymbolInfo()
+#     stock_symbol_list      = stock_symbol_cls.select_stock_symbol_list()
+#     logging.debug(stock_symbol_list)
+
+#     # 종목의 최종거래일자 정보 가져오기
+
+
+#     for symbol_info in stock_symbol_list:
+#         trade_info = stock.localStockInfo(code=symbol_info.get('symbol_code'), page=1, startDate="20190715", endDate="20190722")
+#         logging.debug(jsonify(trade_info))
+
+#     # # 종목정보의 주석거래정보 가져오기
+#     # logging.debug('stock load')
+#     # stock_list = stock.localStockInfo(code='005930', page=1, startDate="20190715", endDate="20190722")
+#     # logging.debug(stock_list)
+#     return jsonify(stock_symbol_list)
+
+# @this.route('/scraping')
+# def scraping():

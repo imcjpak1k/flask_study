@@ -1,0 +1,26 @@
+1. SQL의 다이나믹쿼리 사용방법 강구해야함.
+ --> MyBatis를 사용하자..
+
+Traceback (most recent call last):
+  File "flaskr.py", line 114, in <module>
+    stock_symbol_load_all()
+  File "C:\myproject\stock\app\business\stock_symbol_scraping.py", line 23, in stock_symbol_load_all
+    stock_symbol_load(code=data.get('symbol_code'))
+  File "C:\myproject\stock\app\business\stock_symbol_scraping.py", line 46, in stock_symbol_load
+    execute_count   = stock_symbol_trade_cls.insert_array(stock_list)
+  File "C:\myproject\stock\app\model\stock_symbol_trade_info.py", line 105, in insert_array
+    data.get('volumn')
+TypeError: append() takes exactly one argument (8 given)
+
+
+
+
+32비트 
+
+https://www.microsoft.com/ko-kr/download/confirmation.aspx?id=5555
+
+64비트
+
+https://www.microsoft.com/ko-KR/download/confirmation.aspx?id=14632
+
+

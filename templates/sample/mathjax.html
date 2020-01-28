@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Pandoc math demos</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script> -->
+  
+    {% include './common/head.html' %}
+<script id="MathJax-script"  src="/static/library/MathJax-2.7.5/MathJax.js"></script>
+<!-- <script src="/static/js/mathjs/2.7.2/MathJax.js"> -->
+<script>
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
+    var math = null;                // the element jax for the math output.
+
+    //  Get the element jax when MathJax has produced it.
+    QUEUE.Push(function () {
+      math = MathJax.Hub.getAllJax("MathOutput")[0];
+    });
+
+    //  The onchange event handler that typesets the
+    //  math entered by the user
+    $('#MathInput').change(function(){
+      QUEUE.Push(["Text",math,"\\displaystyle{"+ $(this).val() +"}"]);
+    });
+});
+</script>
+MathJax는 입력 및 출력에서 ​​모듈 식입니다. MathML, TeX 및 ASCIImath를 입력으로 사용하고 HTML + CSS, SVG 또는 MathML을 출력으로 생성하십시오.
+<!-- 
+<script type="text/javascript">
+  //
+  //  Use a closure to hide the local variables from the
+  //  global namespace
+  //
+  (function () {
+    var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
+    var math = null;                // the element jax for the math output.
+
+    //
+    //  Get the element jax when MathJax has produced it.
+    //
+    QUEUE.Push(function () {
+      math = MathJax.Hub.getAllJax("MathOutput")[0];
+      console.log(math)
+    });
+
+    //
+    //  The onchange event handler that typesets the
+    //  math entered by the user
+    //
+    window.UpdateMath = function (TeX) {
+      QUEUE.Push(["Text",math,"\\displaystyle{"+ TeX +"}"]);
+    }
+  })();
+</script> 
+-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Pandoc math demos</h1>
+</header>
+<p><span class="math inline">\(a^2 + b^2 = c^2\)</span></p>
+<p><span class="math inline">\(v(t) = v_0 + \frac{1}{2}at^2\)</span></p>
+<p><span class="math inline">\(\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}\)</span></p>
+<p><span class="math inline">\(\exists x \forall y (Rxy \equiv Ryx)\)</span></p>
+<p><span class="math inline">\(p \wedge q \models p\)</span></p>
+<p><span class="math inline">\(\Box\diamond p\equiv\diamond p\)</span></p>
+<p><span class="math inline">\(\int_{0}^{1} x dx = \left[ \frac{1}{2}x^2 \right]_{0}^{1} = \frac{1}{2}\)</span></p>
+<p><span class="math inline">\(e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = \lim_{n\rightarrow\infty} (1+x/n)^n\)</span></p>
+
+
+<br/>
+<br/>
+<br/>
+<h1 class="title">MathJax Example</h1>
+<!-- https://johngrib.github.io/wiki/mathjax-latex/
+https://www.mathjax.org/#gettingstarted
+https://tex.stackexchange.com/questions/3/compiling-documents-online/1654#1654 -->
+<!-- http://docs.mathjax.org/en/v2.7-latest/installation.html -->
+<!-- 
+  J_\alpha(x) = \sum\limits_{m=0}^\infty \frac{(-1)^m}{m! \, \Gamma(m + \alpha + 1)}{\left({\frac{x}{2}}\right)}^{2 m + \alpha}
+-->
+<pre>
+    tex code : 
+    J_\alpha(x) = \sum\limits_{m=0}^\infty \frac{(-1)^m}{m! \, \Gamma(m + \alpha + 1)}{\left({\frac{x}{2}}\right)}^{2 m + \alpha}
+</pre>
+Type some TeX code:
+<input id="MathInput" size="50" />
+<!-- <input id="MathInput" size="50" onchange="UpdateMath(this.value)" /> -->
+<p>
+
+<div id="MathOutput">
+You typed: ${}$
+</div>
+
+
+</body>
+</html>
