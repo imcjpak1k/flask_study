@@ -1,5 +1,29 @@
+# 실패
+
+# venv(가상환경)
+[fdgfdg](https://jamanbbo.tistory.com/45)
+## 가상환경 생성
+### window 
+#### python -m venv [venv 이름] 
+#### python -m venv ./myenv 
+
+### mac 
+#### python3 -m venv [venv이름] 
+#### python3 -m venv ./myenv
+
+## 가상환경 활성화
+
+### window 
+#### myenv\Scripts\activate 
+
+### mac 
+#### source myenvbin\activate # or . myenv\bin\activate
+
+
+
+출처: https://jamanbbo.tistory.com/45 [자기계발하는 쏭이]
+
 # MD파일 TEST
-## MD파일 TEST
 
 https://flask-docs-kr.readthedocs.io/ko/latest/tutorial/dbinit.html
 
